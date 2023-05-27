@@ -15,8 +15,8 @@ jobs:
       -
         name: Prepare environment
         run: |
-          git clone https://github.com/flutter/flutter.git /usr/local/flutter
-          export PATH="/usr/local/flutter/bin:/usr/local/flutter/bin/cache/dart-sdk/bin:$PATH"
+          git clone https://github.com/flutter/flutter.git flutter
+          export PATH="$PWD/flutter/bin:$PWD/flutter/bin/cache/dart-sdk/bin:$PATH"
           flutter channel stable
           flutter upgrade
           git clone https://github.com/JagandeepBrar/lunasea.git lunasea
