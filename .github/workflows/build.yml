@@ -12,16 +12,17 @@ jobs:
         name: Checkout
         uses: actions/checkout@master
 
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ secrets.DOCKER_USERNAME }}/lunasea
+
       -
-        name: Prepare environment
+        name: Prepare lunasea
         run: |
-          git clone https://github.com/flutter/flutter.git flutter
-          export PATH="$PWD/flutter/bin:$PWD/flutter/bin/cache/dart-sdk/bin:$PATH"
-          flutter channel stable
-          flutter upgrade
-          git clone https://github.com/JagandeepBrar/lunasea.git lunasea
-          cd lunasea
-          flutter build web
+          docker run -v $PWD/lunasea:/lunasea ghcr.io/jagandeepbrar/lunasea:stable mv /usr/share/nginx/html /lunasea
+          ls -al ./lunasea/html
 
       - 
         name: Set Up QEMU
@@ -38,15 +39,21 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # - 
-      #   name: Build
-      #   uses: docker/build-push-action@v4
-      #   with:
-      #     context: .
-      #     file: Dockerfile
-      #     platforms: |
-      #       linux/amd64
-      #       linux/arm64/v8
-      #     push: true
-      #     tags: |
-      #       ${{ secrets.DOCKER_USERNAME }}/lunasea:latest
+      - 
+        name: Build
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: Dockerfile
+          platforms: |
+            linux/386
+            linux/amd64
+            linux/arm64/v8
+            linux/arm/v7
+            linux/arm/v6
+            linux/ppc64le
+            linux/s390x
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/lunasea:latest
+          labels: ${{ steps.meta.outputs.labels }}
