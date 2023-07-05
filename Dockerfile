@@ -1,4 +1,4 @@
-FROM alpine:3.17 AS build
+FROM alpine:3.18 AS build
 
 RUN apk add --no-cache build-base jq curl wget
 WORKDIR /src
